@@ -1,0 +1,1034 @@
+---
+page-title: "test"
+fontsize: 12pt
+geometry: a4paper, margin=2.5cm
+output:
+  pdf_document: 
+    latex_engine: xelatex
+  html_document: default
+  word_document: default
+header-includes:
+- \usepackage{pdflscape}
+- \newcommand{\blandscape}{\begin{landscape}}
+- \newcommand{\elandscape}{\end{landscape}}
+- \usepackage{fontspec}
+- \setmainfont{Times New Roman}
+- \usepackage{setspace}
+- \usepackage{fvextra}
+- \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+- \usepackage{pdfpages}
+- \usepackage{amsmath}
+- \onehalfspacing
+- \usepackage[labelformat=empty]{caption}
+classoption: normalem
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning=FALSE, message=FALSE, echo = FALSE, dpi=300, dev = "cairo_pdf")
+
+library(ggplot2)
+library(magrittr)
+library(readxl)
+library(tidyverse)  
+library(sjPlot)
+library(jtools)
+library(huxtable)
+library(sandwich)
+library(stringi)
+library(pivottabler)
+library(officer)
+library(flextable)
+library(openxlsx)
+library(grid)
+library(gridExtra)
+library(ggthemes)
+library(egg)
+library(extrafont)
+library(ggtext)
+library(glue)
+library(knitr)
+library(huxtable)
+library(dplyr)
+library(kableExtra)
+loadfonts(device="win",quiet = T)
+
+res_path <- "C:/Users/Vojta/OneDrive/Documents/PMV/B-baka/Res/res.xlsx"
+
+df <- read_excel(res_path)
+salient <- read_excel(res_path, sheet = "salient")
+nonsalient <- read_excel(res_path, sheet = "nonsalient")
+
+modes <- function(x) {
+  ux <- unique(x)
+  tab <- tabulate(match(x, ux))
+  ux[tab == max(tab)]
+}
+
+opts <- options(knitr.kable.NA = "")
+
+
+```
+
+\pagenumbering{gobble}
+
+# Bibliographical entry {.unlisted}
+
+GREGER, Vojtěch. *Pure Ideology? The Role of Numeracy in Formulating Policy Preferences.* Praha, 2021. 46 pages. Bachelor's thesis (Bc.) Charles University, Faculty of Social Sciences, Institute of Political Studies. Department of Political Science. Thesis advisor RNDr. Jan Kofroň, Ph.D.
+
+>       
+
+**Length of the thesis:** 95 658 characters (with spaces)
+
+\newpage
+
+# Abstract {.unlisted}
+
+In politics, numbers play a very significant role nowadays, and voters' ability to understand the astronomical sums regularly thrown at them is typically assumed without question. Yet studies have shown that not everyone possesses this ability---numeracy---equally, and that while high numeracy is a useful tool for making decisions, low numeracy can lead to fairly significant misinterpretations of numerical information. To date, only a handful of studies have explored the role of numeracy in political decision-making, and consensus has yet to be reached. This thesis seeks to more closely examine the relationship of numeracy and ideology, as well as how the effect of numeracy changes with the salience of a given issue---the extent to which that issue is politically controversial.
+
+By means of a survey experiment (N=122), we exposed individuals to situations where they formulated specific policy preferences regarding the ideal difference between two sources of income, whose specific nature differed across two scenarios of varying salience. Using Ordinary Least Squares regression, we found that numeracy significantly affected respondents' decision-making on an issue of high ideological salience, but no effect of numeracy was observed when respondents were presented with a less salient issue. Furthermore, having also examined the relationship between numeracy and resistance to framing effects, we found no evidence that highly numerate individuals are more resistant to framing bias.
+
+# Abstrakt {.unlisted}
+
+V politice dnes čísla hrají velmi významnou roli, přičemž schopnost voličů rozumět astronomickým sumám, které jsou na ně neustále chrleny, je bez jakýchkoli pochyb považována za samozřejmou. Studie však ukázaly, že ne každý touto schopností---kvantitativní gramotností---disponuje ve stejné míře. Zatímco vysoká kvantitativní gramotnost je užitečným nástrojem v rozhodování, nízká může vést k velmi chybným interpretacím kvantitativních informací. Doposud se jen hrstka studií zabývala vlivem kvantitativní gramotnosti na politické rozhodování a konsensu zatím nebylo dosaženo. Tato práce se pokouší blíže prozkoumat vztah kvantitativních schopností a ideologie a zodpovědět otázku, jak se vliv kvantitativní gramotnosti mění se závažností otázky: mírou, do které je daná otázka považována za politicky kontroverzní.
+
+V dotazníkovém šetření (N=122) jsme jednotlivce vystavili situacím, v nichž formulovali specifické politické postoje týkající se ideálního rozdílu mezi dvěma zdroji příjmů, přičemž jejich konkrétní podoba se lišila napříč dvěma scénáři s různou ideologickou závažností. Skrze Ordinary Least Squares regresi jsme zjistili, že kvantitativní gramotnost silně ovlivnila rozhodování respondentů u vysoce ideologicky závažné otázky. U respondentů, kteří řešili otázku méně závažnou, však žádný efekt kvantitativní gramotnosti pozorován nebyl. Mimo to jsme zkoumali také vztah mezi kvantitativní gramotností a odolností vůči rámcovému zkreslení, kde jsme však nenalezli žádné důkazy pro tvrzení, že jedinci s větší mírou kvantitativní gramotnosti jsou vůči tomuto zkreslení odolnější.
+
+# Keywords {.unlisted}
+
+numeracy, decision-making, ideology, framing effects, framing bias, ideological salience
+
+# Klíčová slova {.unlisted}
+
+číselná gramotnost, rozhodování, ideologie, rámcování, rámcové zkreslení, ideologická závažnost
+
+# Název práce
+
+Nic než ideologie? Vliv kvantitativních kompetencí na formulování politických preferencí
+
+\newpage
+
+\pagenumbering{arabic}
+
+# Introduction
+
+Numeracy refers to individuals' ability to "*understand probabilistic and mathematical concepts*" (Peters, 2012), as well as to effectively process numerical and nonnumerical information. (Ibid.) Existing research in health science and psychology, as well as other fields, has demonstrated that numeracy is a crucial factor not just in how individuals perceive quantitative information, but also in how they act upon it.
+
+It is surprising, then, that very little research has been done into the role of numeracy in political decision-making, an area where quantitative information of all kinds is firmly embedded in the majority of relevant issues. While examples of solid and enlightening research on numeracy in politics do exist, most of the few studies in political science that mention numeracy do so only in passing, with only a handful delving into any considerable depth. Moreover, there exist several points of contention between such studies, making the role of numeracy in political decision-making unclear at best.
+
+Seeking to re-examine and improve upon the work conducted previously by other authors, namely Pedersen and Larsen in their study of voters' attitudes towards unemployment benefits, this thesis explores the role of numeracy in the formulation of concrete policy preferences, as well as numeracy's ability to mitigate the impacts of framing bias on decision-making. As such, we inquire how numeracy affects the formulation of policy preferences, whether the effect of numeracy on decision-making changes across issues of differing ideological salience, and whether numeracy mitigates the impact of framing effects on decision-making.
+
+The effect of numeracy was examined by means of a survey experiment administered primarily to undergraduate students of social sciences. Due to the onset of the Covid-19 pandemic in early 2020, our ability to collect a substantial number of responses was very much limited, and we were not able to fully achieve the desired number of responses. Nevertheless, we have still managed to collect `r nrow(df)` responses, approximately 50 per cent of our original goal.
+
+Furthermore, it is worth noting that certain deviations from the original thesis project (see above) had been necessary. Firstly, the hypotheses outlined in the thesis project have been rewritten, specified, and expanded. Although the predictions contained therein have largely remained the same, it was necessary to amend this aspect of the original framework for this thesis, owing to a deeper examination of the theoretical background and a desire to improve the falsifiability of the hypotheses. Secondly, the contents of the non-salient scenario of the survey experiment conducted for this thesis have been changed, as concerns had been raised about the relatively high ideological salience of the issue of paid maternity leave. Thus, this potential issue was replaced by a significantly less salient one. However, the structure of the non-salient scenario, as well as of the survey experiment at large, has remained unchanged.
+
+This thesis is divided into several chapters. The first chapter aims to provide an overview of existing research on the topic of numeracy and decision-making, framing effects, and other phenomena pertinent to the topic. Following this, we pose our research questions and introduce research methods used in this thesis. In a subsequent chapter, we present the results of the conducted survey experiment. We then discuss the implications of our results and relate them to existing findings in numeracy research. To conclude, we summarise the most important points of our study, outline the perceived limitations of our research, and suggest several avenues for further research.
+
+\newpage
+
+# 1. Theoretical framework
+
+In this chapter, we will discuss the present state of the canon of research regarding human decision-making and relate it to the subject of this thesis. We will begin with a general overview of the state of knowledge about decision-making and biases. A more thorough discussion of the most important findings of numeracy research will follow, whereafter the crucial debates and disputes in this field will be presented. Furthermore, we will provide an overview of the tools used for measuring numeracy in scientific experiments. Finally, we will discuss the applications of numeracy research in political science and the outstanding questions in this field, whereupon we will propose possible means of resolving them.
+
+## 1.1 Human decisions and biases
+
+Throughout studies into how humans make judgements and decisions, a clear pattern of errors and irrational actions has emerged in researchers' findings. It seems that humans' decision-making, for all our supposed rationality, is beset by a plethora of "*deviations from...purely rational judgement and decisions*" (Ehrlinger et al., 2016) which distort this process. These deviations are commonly referred to as biases. Typically, biases are further divided into cognitive biases, which stem from faulty reasoning and can potentially be alleviated, and emotional biases, which stem from one's emotions and beliefs, and---as they are difficult to alleviate---can only be controlled for in decision-making. (CFA Institute, 2021)
+
+Currently, much research has been done into biases, and researchers now differentiate between "*more than 100 cognitive, decision-making, and memory-related biases*" (Ehrlinger et al., 2016), each documenting a specific way in which human reasoning malfunctions to produce a non-optimal decision.
+
+Some notable examples of cognitive biases include the availability bias, which manifests itself in the subconscious belief that the ease with which something is recalled is representative of its actual prevalence, the infamous confirmation bias, by which individuals subconsciously reject evidence contradicting a given theory (especially if they themselves are proponents thereof), representativeness bias, which, for example, makes people view particularly notorious archetypes as representative of a wider population, i.e. librarians are often shy, helpful, and have a passion for detail, therefore any person with such characteristics is most likely to be a librarian, in spite of people in other, much more common professions, such as physicians or farmers, sharing the same traits. (Ibid.)
+
+Finally, it is worthwhile to mention a bias of particular importance for numeracy research, as well as for this thesis: framing bias. In the context of decision-making, framing refers to the presentation of information in ways which change the perception of that information by potential readers. Typical frames juxtapose two seemingly different values or situations which are, however, identical. An example is a description of a medication's side effects: one frame states that 10% of patients develop a blistering rash, a second frame states that 90% do not develop the rash. Although both frames contain the same information, in the study whence this example was extracted, respondents exposed to the former frame consistently rated the drug in question as riskier than those exposed to the latter. (Peters et al., 2010)
+
+## 1.2 Numeracy and decisions
+
+With biases running rampant in individuals' decision-making, distorting their ability to make rational and optimal choices, potentially jeopardising both them and---in some cases---those dependent on their decisions, much research has been conducted into how these biases can be mitigated, and which attributes and abilities make individuals more resistant to bias. Among those, numeracy, the ability to understand and process quantitative information, has emerged as a significant factor in mitigating certain types of bias in decision-making.
+
+Extensive research in several fields has demonstrated that numeracy is key not just in how we perceive certain kinds of information, but also in how we are able to use it to make decisions. Studies have shown that the highly numerate are more resistant to cognitive biases such as framing effects and are better able to extract useful information from quantitative data, (Peters et al., 2006) prioritise numerical risk assessments over narrative evidence, (Dieckmann et al., 2009) and potentially make more optimal choices in situations involving risk. (Peters et al., 2012) In health science, numeracy has also been linked specifically to patients' ability to accurately assess the effect of preventive measures in reducing the risk of diseases. (Schwartz et al., 1997)
+
+The ongoing debate about numeracy and framing is particularly interesting. An initial study showed significant differences across how the framing of a student's exam performance (74% correct vs. 26% incorrect) was rated by respondents differing in numeracy, with low numerates being more affected by the frame. (Peters et al., 2006) However, a later attempt to replicate these results failed. (Peters et al., 2010) In addition to that, a later study by Pedersen and Larsen, showed individuals with high subjective numeracy being affected by framing effects to the same degree as low numerates.[^1](Pedersen & Larsen, 2018)
+
+[^1]: It is worth noting that this study used a tool for the measurement of subjective numeracy, unlike other studies referred to herein, which measured objective numeracy. This point will be discussed in more detail later.
+
+A further, less contested point of interest in numeracy research have been the differing perceptions of numerical information based on its format among low numerates. The aforementioned initial study found that low numerates tended to underestimate risks presented in the percentage format compared to the frequency format (e.g., 1 in 10), while high numerates' perceptions remained consistent between formats, likely owing to their superior ability to transfer between formats. (Peters et al., 2006) Similar findings were reported by other studies. (Dieckmann et al., 2009; Peters et al., 2010) It therefore appears that one of the main attributes of a high numerate is the ability to easily transfer quantitative information from one format to another.
+
+## 1.3 Measuring numeracy
+
+To operationalise numeracy in studies, researchers have developed several tests which measure respondents' numeracy based on answers to relatively short and simple questions involving ratios, percentages, and risks. The first numeracy test of its kind was introduced by Schwartz et al. in a study on the role of numeracy in understanding the benefits of preventive cancer screenings. (Schwartz et al., 1997) The study utilised three short questions dealing with basic probability to measure numeracy.
+
+Following up on the work of Schwartz et al., Lipkus et al. used the existing questions to create an objective numeracy test for use among highly educated samples. Two of the original questions were retained and one modified; in addition to that, seven new questions were added, dealing not only with probability, but also risk, expressions of probability using the frequency format, and the transformation of probability from one format to another. (Lipkus et al., 2001)
+
+The Lipkus test became widely used in numeracy research both in health science and psychology. But while it was shown to be a good measure of numeracy, two distinct issues emerged over time: firstly, the discriminability of the test among highly educated samples was too weak, i.e. highly educated respondents scored extremely well on the test; (Cokely et al., 2012) secondly, some researchers claimed that the test negatively affected survey completion rates due to, among other factors, the presence of mathematics, which led to frustration among some---especially less numerate---respondents. (Fagerlin et al., 2007)
+
+As a response to these issues, two new, distinct measures of numeracy were developed. One was the Subjective Numeracy Scale (SNS) created by Fagerlin et al., (Fagerlin et al., 2007) which sought to address the issue of respondents' negative reactions to the Lipkus test by replacing the objective measurement with a subjective self-assessment of numerical abilities. Instead of making respondents take "*a mathematics test*", (Ibid.) the SNS questioned them on their perception of their numerical abilities, such as working with fractions, calculating tips, as well as their preferences with regards to working with quantitative information. (Ibid.) However, unlike the abovementioned numeracy tests, the subjective nature of the SNS calls into question its ability to gauge individuals' numeracy with the same degree of accuracy as that of an objective test. Among other factors, which we discuss in section 1.4, there is a rather substantial record of potential biases and obstacles which impede individuals from providing self-assessments of their skills reflective of their true ability. (Dunning et al., 2004)
+
+The other was the Berlin Numeracy Test (BNT), developed by Cokely et al., whose objective was to provide improved discriminability in the measurement of numeracy in highly educated samples, but which ultimately also partly addressed Fagerlin et al.'s concerns to some degree by shortening the duration of the test to approximately 3-4 minutes while retaining objectivity. (Cokely et al., 2012)
+
+The relative abundance of numeracy tests and measures creates a challenge for the would-be researcher, who has to choose the most appropriate means of measuring numeracy for their study. In our case, we opt for an objective numeracy measurement tool, specifically the Berlin Numeracy Test. We believe it to be the most appropriate for our study due to its improved discriminability compared to the Lipkus test, as well as its relative simplicity.
+
+## 1.4 Numeracy in politics
+
+Much like in health science, innumeracy among the general public can pose significant problems. Debates about sensitive topics such as public debt and budget deficits, taxation, military spending, public sector pay, or the size of unemployment benefits are all saturated with often astronomical and abstract sums of money far greater than sums that the average voter is used to in their day-to-day life. Yet much like in health science, voters' ability to process quantitative information is presumed without question. At the same time, the findings of studies in other fields, such as those referred to above, make it difficult to imagine that a person overestimating a risk based on its being presented in a specific format (Dieckmann et al., 2009) or systematically opting for inferior odds (Peters et al., 2006) will fare any better when confronted with figures ranging into the trillions at times.
+
+Unlike health science or psychology, however, politics appears to be a much more complicated realm with regards to how individuals make decisions. Rationality vies for influence with emotions, as well as one's ideological leanings. While in other fields, numeracy appears to be a valuable tool for decision-making, the results of several studies indicate that in the realm of political decision-making, the role of numeracy is altogether different.
+
+A study by Kahan et al. observed how numeracy's effect on decision-making in the absence or presence of ideological considerations. Its results showed high numerates performing worse on a mathematical problem when the correct answer contradicted their ideological beliefs than low numerates, (Kahan et al., 2013) suggesting that ideological considerations take precedence over a rational approach in political decision-making. The implications of these findings are potentially highly significant not just for numeracy research in political science, but numeracy research as a whole.
+
+Kahan et al.'s findings were later---to some extent---corroborated in a study by Pedersen and Larsen, which studied the translation of voters' ideological positions into concrete policy attitudes, namely the size of unemployment benefits. Respondents' subjective numeracy was, among other factors, controlled for in the study. The study's results showed subjective numeracy interacting with ideology, leading to more extreme preferences on the size of unemployment benefits on both parts of the political spectrum.[^2](Pedersen & Larsen, 2018) This study therefore once again suggested that in political decision-making, numeracy plays a more passive role (although it also showed that it is not at all irrelevant) while ideological considerations are the primary determinant in decisions. However, it should be noted that Pedersen and Larsen measured numeracy using the SNS, unlike most other studies referenced herein.
+
+[^2]: This meaning that self-identified left-wing respondents preferred unemployment benefits identical or almost identical to average income while self-identified right-wing respondents preferred a greater gap between the two. This effect was greater as a respondent's ideological position moved further away from the centre.
+
+The results of a study utilising the SNS to measure numeracy are not *ipso facto* invalidated. However, they should not be used as the sole point for making inferences about numeracy and its properties. While the SNS is relatively strongly correlated with the Lipkus et al. test, it should be noted that the Lipkus et al. test itself has certain limitations (detailed above). Furthermore, and perhaps more importantly, there arises the question whether self-reporting of quantitative skills is always reliable.
+
+The problem with self-assessed reporting of numeracy is relatively straightforward: one's subjective feelings about their ability to deal with mathematical concepts may not always reflect one's actual ability. Individuals can (knowingly or not) overestimate their abilities or make judgment based on imperfect information, notably by comparing themselves with their immediate peers, rather than the wider population. As an example of the former concern, a U.S. literacy survey saw respondents with very poor literacy severely overestimating their reading skills. (Nelson et al., 2008) With the latter issue, it may arise due to a lack of contrast in educational systems such as that of the Czech Republic, where schools are divided into several groups, each teaching even basic subjects such as mathematics at vastly differing levels of difficulty. The lack of a unified standard may, then, create false impressions of either overconfidence (in well-performing students faced with less challenging curricula) or its opposite (in poorly performing students faced with more challenging ones).
+
+Countering these implications is a study by Mérola and Hitt, where a group of U.S. adults was presented with the results of a fictional study regarding the usage of alternative punishments as a means of criminal justice reform. They found that highly numerate respondents responded very differently to strong and weak arguments, and that they were much more likely to be persuaded by arguments by the opposing party than less numerate ones (i.e. highly numerate Republican respondents were, on average, much more receptive towards vignettes where the fictional study was claimed to have been commissioned by the Democratic Party). (Mérola & Hitt, 2016) It is worth noting that when a follow-up study---wherein analogous verbal expressions replaced quantitative information---was conducted, the differences between high and low numerates disappeared.
+
+Mérola and Hitt's findings suggest that numeracy does not always take a back seat in political decision-making. Nevertheless, this is not inherently contradictory vis-à-vis Kahan et al., and Pedersen and Larsen's results. The key difference between the two cases appears to be the type of political issue that was presented in each study. Kahan et al. utilised a highly controversial topic among Americans in their study: gun control. Pedersen and Larsen's study dealt with unemployment, a subject of long-standing political debate between the political Left and Right. Mérola and Hitt, on the other hand, used what they themselves describe as a "*moderately salient issue*". (Ibid.)
+
+These facts lead us to consider that just as on issues such as gun control and unemployment, numeracy's role is affected by ideology, both of these variables also interact with another one, namely the salience of the issues themselves. Thus, the role of numeracy on decision-making, as well as of its interaction with ideology, may differ significantly on ideologically salient questions, which are subjects of great controversy in politics, and questions which, while they may fall into the domain of politics, hold no great significance for voters and parties alike. An example of such an issue in contrast to unemployment benefits, the topic chosen by Pedersen and Larsen, could well be a related, but ultimately much less debated issue, such as the retraining of unskilled workers.
+
+Summing up, we now have a clear picture of the main findings and controversies of numeracy research in political science. We have presented three key studies, between whose implications we observe possible contradictions. At present, it is not possible to reconcile the findings of those studies simply based off the information contained therein. However, a relatively straightforward path for a new study to attempt such a reconciliation has been laid out above. Thus, this thesis will be dedicated to attempting to better explain the differences between the role of numeracy in decision-making, taking into account ideological salience. The means by which we will attempt to do so is detailed in the following chapter.
+
+\newpage
+
+# 2. Methodology
+
+This chapter will concern itself with the aims and theoretical framework of our thesis, as well as basic parameters of the survey experiment conducted for the purposes of this study and the research methods used for the analysis thereof.
+
+We will discuss, respectively, the main objectives of this study, the conceptual and operational frameworks for our dependent and independent variables, our research design, concluding with a description of our final sample and the methods used to analyse the collected data.
+
+## 2.1 Research target
+
+The primary goal of this study is to expand the canon of numeracy research and to encourage further inquiry into numeracy's role in political decision-making and individuals' understanding of politics. In specific terms, we seek to reconcile apparent contradictions in the findings of previous studies, as detailed in section 1.4. Most notably, we wish to uncover whether Pedersen and Larsen's results can be replicated with a different sample and---perhaps more importantly---using an *objective* numeracy measurement tool. For that reason, certain parts of the survey experiment designed for this study utilise elements from Pedersen and Larsen's own survey experiment (cases of this are detailed in sections 2.2 and 2.4).
+
+To clearly delineate the specific issues this study concerns itself with, we pose the following research questions:
+
+-   How does numeracy affect the formulation of policy preferences? (Research Question 1)
+-   Does the effect of numeracy on decision-making change across issues of differing ideological salience? (Research Question 2)
+-   Does numeracy mitigate the impact of framing effects on decision-making? (Research Question 3)
+
+The main point of interest in our research is the relationship between numeracy and ideology, which has already been shown as very significant in the abovementioned studies. In this thesis, we seek to expand the state of knowledge about numeracy's role in political decision-making by providing a clearer picture of how ideological salience affects the numeracy--ideology relationship.
+
+Both Kahan et al., and Pedersen and Larsen have shown that ideology plays the main role in the way individuals formulate their policy preferences. Additionally, Pedersen and Larsen observed greater differences in the preferences of high numerates of differing ideological persuasions. (Pedersen & Larsen, 2018) This implies the existence of an interaction effect between numeracy and ideology, which drives individuals' decision-making. However, we further posit that a vital element that may determine the scale---or even presence---of this effect is ideological salience---simply put, the extent to which an issue is considered to be important politically. We test our assertions by conducting a survey experiment utilising a modified and expanded version of Pedersen and Larsen's experimental treatment. Alongside the work-welfare dichotomy used by Pedersen and Larsen, we include an analogous scenario dealing with an ideologically non-salient question in the survey experiment. In both scenarios, respondents express their preference regarding the size of the difference between two sources of income; thus, we speak of a "preferred benefit gap".
+
+In essence, then, we seek to examine how the interaction of ideology and numeracy influences individuals' decision-making, which is represented by the preferred benefit gap. We also want to uncover how ideological salience affects this interaction. The following diagram illustrates our hypothesised relationship governing the formulation of policy preferences:
+
+>        Numeracy
+
+>              X
+
+>         Ideology              →→→              Preferred benefit gap
+
+>              X
+
+> Ideological salience
+
+### 2.1.1 The role of framing effects
+
+A secondary aim of this study is to explore the relationship between numeracy and the impact of framing effects on individuals' decision-making. In line with previous findings in other fields (see section 1.2), we find the existence of a relationship to be likely. We measure the impact of framing effects by presenting our experimental questions in several different forms, utilising gain-loss and unit framing. Across the individual frames, we should observe differences in the means of the preferred benefit gap. At the same time, if high numeracy *does* mitigate the impact of framing, this effect should be less pronounced among high numerates (see section 2.3 for further information).
+
+## 2.2 Independent variables
+
+We posit that three key variables influence the process of formulating policy preferences. These are an individual's numeracy, their ideological position, and the ideological salience of the issue at hand. This section will discuss the nature of these variables and outline how they were measured in the survey experiment we had conducted. The most important information in this subsection is contained in Table 1, which provides a brief overview of all of the relevant variables in our study. The variables are discussed in more detail below.
+
+**Table 1.** *Overview of key variables.*
+
+| Variable              | Type        | Possible values                      | Description                                                                                                                                                                                     |
+|----------------|----------------|----------------|-------------------------|
+| Preferred benefit gap | Dependent   | 0+ (upper limit cannot be specified) | The preferred benefit gap denotes the difference between two sources of income deemed reasonable by the specific respondent.                                                                    |
+| Ideological position  | Independent | 1-11                                 | The ideological position of a respondent denotes their self-identified position on an 11-point economic Left-Right scale, where 1 is the most left-wing value and 11 the most right-wing value. |
+| Numeracy              | Independent | 0-4                                  | The numeracy of a respondent denotes their score on the Berlin Numeracy Test, which rates respondents' ability to understand numerical information.                                             |
+| Ideological salience  | Independent | Low/high                             | The ideological salience of an issue represents the extent to which it is deemed to be politically important or controversial.                                                                  |
+
+### 2.2.1 Numeracy
+
+We expect numeracy to play an important role in how respondents will react to the experimental treatment, especially across the two different levels of salience. Furthermore, we also posit that the impact of framing effects on the dependent variable will be significantly moderated by numeracy.
+
+As a means of operationalising numeracy, we have decided to include the Berlin Numeracy Test in the survey experiment. The test consists of four questions dealing with probability. Respondents are given a score of 0-4 based on the number of questions answered correctly. For analysis purposes, we divide them into two groups: the highly numerate, this being respondents with a score of 3 or 4, and the less numerate, who scored 2 or fewer points on the test (see section 2.5).
+
+### 2.2.2 Ideology
+
+To measure respondents' ideological position, we ask them to identify their ideological position (with regards to economic issues) on an 11-point Likert scale (1 -- very left-wing, 6 -- centrist, 11 -- very right-wing), with a short cue intimating expected left- and right-wing positions on economic issues: "*In political debates about economics, we often talk about the Left and the Right. The Right typically supports lower taxation, less pronounced state intervention into the economy, and the free market, while the Left supports expanding public services (healthcare, social care) and calls for greater regulation of the market by the State.*"
+
+Furthermore, respondents indicated their level of agreement with the following statements, originally used by Pedersen and Larsen in their study: (Pedersen & Larsen, 2018)
+
+-   Many people are unemployed because they do not want to work.
+-   Many people are unemployed because they are unlucky.
+-   Many people are unemployed because they do not do enough to find a job.
+
+Respondents express their level of agreement with the statements on a 6-point scale (agree; somewhat agree; neither agree nor disagree; somewhat disagree; disagree; don't know). Their answers are then converted into a 5-point score indicating whether a respondent's views on the above questions are more left-wing (1--3 points) or more right-wing (3-5 points).
+
+### 2.2.3 Ideological salience
+
+The final independent variable in our analysis is that of ideological salience. We posit that the importance of a given issue to a respondent will affect the way they perceive that issue and make decisions about it.
+
+To conceptualise ideological salience for the purposes of our thesis, we can seek help in political scientists' research on coalition-making. Therein, salience refers to the importance that parties ascribe to various cabinet portfolios during coalition negotiations. (Bäck et al., 2011) Although not all parties place the same value on the same portfolios, as some issues are more important within certain party families, (Ibid.) there are portfolios which virtually all parties consider to be objectively valuable, particularly "*finance, foreign affairs or* $$the$$ *interior*". (Ecker et al., 2015)
+
+We can reasonably assume that just as parties ascribe different levels of importance to various portfolios and issues, so do voters. While issues such as immigration, healthcare, and economic policy typically dominate the list of voters' priorities in election campaigns, relatively few---if any---voters consider transportation or the funding of the arts to be issues of paramount importance in national elections. (ČT24, 2017; Pilnáček and Tabery, 2018) Thus, we believe that the concept of issue salience can be applied to individuals' decision-making, just as it is conventionally understood to be part of the decision-making process in coalition negotiations.
+
+In analysis, we operationalise ideological salience as a dummy variable, with the less salient issue (classic welfare vs. worker retraining programme scenario) taking the value of 0 and the more salient one (work vs. welfare) taking the value of 1.
+
+## 2.3 Dependent variable
+
+This study concerns itself with how individuals translate their ideological beliefs into specific policy preferences involving numbers. We hope to achieve the understanding of this process using a survey experiment similar to the one conducted by Pedersen and Larsen. In this experiment, we operationalise specific policy preferences as the preferred benefit gap expressed by the respondents in our experiment. The preferred benefit gap represents the size of the difference between two sources of income that a respondent deems reasonable. The following two equations describe the difference represented by the preferred benefit gap in the two scenarios (*S* refers to the salient scenario while *N* refers to the non-salient scenario):[^3]
+
+[^3]: It should be noted that the role of these equations is purely illustrative, as respondents are not provided with the actual sizes of full-time pay and unemployment benefits, only differences between the two.
+
+$$
+Preferred\ Benefit\ Gap_S = Average\ Pay - Reasonable\ Benefit\ Size
+$$ $$
+Preferred\ Benefit\ Gap_N = Requalification\ Benefit\ - Reasonable\ Benefit\ Size
+$$
+
+With regards to our research, making the preferred benefit gap our dependent variable allows us to conveniently measure both the impact of ideology, numeracy, and ideological salience onto individuals' policy preferences, but also the influence of framing effects upon their decision-making. In this section, we will elaborate on how we expect our independent variables to influence values on the preferred benefit gap and formulate appropriate hypotheses for our experiment.
+
+Concerning the values we expect the preferred benefit gap to take, it is reasonable to assume that across both levels of ideological salience, the lowest value will be 0. We do not expect lower values, as the specific framing of the experimental treatments essentially makes any answer lower than 0 impossible. In the salient scenario, then, we believe that the vast majority of responses will range between 0 and 400, while in the non-salient scenario, values should commonly range between 0 and 100. This difference is given by the fact that the difference between the two sources of income is much larger in the salient scenario than in the non-salient.
+
+### 2.3.1 Numeracy and ideology
+
+Before we address the relationship of numeracy and ideology, we will specify our expectations for values on the preferred benefit gap in general. Drawing on conventional wisdom about ideological approaches to social policy, we expect that with high ideological salience, the size of the preferred benefit gap should be smaller on the Left and greater on the Right.
+
+> H1: *In an ideologically salient scenario, the preferred benefit gap will be greater among right-leaning respondents.*
+
+Secondly, we look at the cornerstone of our research: the relationship between numeracy and ideology in formulating policy preferences. We will begin by discussing the relationship in a highly salient scenario. From Pedersen and Larsen's research, whose research design we have partly adopted, we already have a basis for what values may be observed on the dependent variable (see section 1.4). Nevertheless, Pedersen and Larsen's results with regards to numeracy ought to be taken "with a pinch of salt" due to their usage of the Subjective Numeracy Scale. Fortunately, Kahan et al.'s study, which utilised an objective measurement of numeracy, corroborates these results, showing high numerates acting much more "ideologically". (Kahan et al., 2013) In this case, we predict that higher numeracy will lead to greater variation in the preferred benefit gap across ideology, or that the effect of ideology on decision-making will be augmented by high numeracy. Among less numerate respondents, ideology will remain a determinant of the preferred benefit gap, but its effect will be less pronounced.
+
+> H2a: *In an ideologically salient scenario, the size of the preferred benefit gap will be strongly influenced by ideology.*
+
+> H2b: *In an ideologically salient scenario, the effect of ideology on the preferred benefit gap will be greater among high numerates.*
+
+If we then consider expected values on the dependent variable in non-salient manipulations, the key difference seems to be the role of ideology: here, ideology should have a considerably smaller---if any---impact on the preferred benefit gap. This is simply due to the fact that non-salient topics are not ascribed particular importance in political debates or campaigns and, as such, decisions about them and positions on them should rely on ideological considerations to a much smaller extent than highly salient topics.
+
+> H3: *In an ideologically non-salient scenario, ideology will have no significant effect on the preferred benefit gap.*
+
+As for predicting the relationship between numeracy and the dependent variable in the non-salient, this is complicated by the fact that, to our knowledge, no reference point exists. This study appears to be the first to concern itself with measuring this relationship; likewise, no theory describes it. At present, it is beyond our capabilities to deduce a theory of our own, and thus, we can only speculate at what the relationship between these variables will be.
+
+It should be noted that Mérola and Hitt's findings can only provide hints. While we know from this study that in the absence of a strong ideological cue, individuals decision-making was primarily motivated by numeracy, there are very significant differences between that experiment and the one being conducted here. Namely, there is no objectively "correct" answer to be arrived at: Mérola and Hitt presented several scenarios utilising arguments that could objectively be deemed strong or weak. The same problem applies to Kahan et al.'s results, which show high numerates much more successfully solving an ideologically non-salient problem: this experiment also involved an objectively correct answer respondents could reach. We are dealing with individuals' preferences, with the only tangible reference point being the *actual* size of the gap between unemployment benefits and retraining programme benefits, whose correctness this study neither can nor seeks to evaluate.
+
+One possibility is that there will simply be *no* relationship. With low ideological salience, normative considerations disappear, and the meaning of the numbers presented to respondents, as the meaning of the issue itself, disappear with them. In this case, respondents may arrive at their preferred benefit gap using heuristics not accounted for in this study. However, even such an inconclusive scenario would be highly valuable for our research, as it would show that numeracy does not play a role in the process being studied. As such, we propose two mutually exclusive hypotheses:
+
+> H4a: *In an ideologically non-salient scenario, numeracy will have a significant effect on the preferred benefit gap.*
+
+> H4b: *In an ideologically non-salient scenario, numeracy will have no significant effect on the preferred benefit gap.*
+
+Finally, although this is already implicit in the above hypotheses, we ought to formally declare our expectations for the role of ideological salience. Although we are unsure about the role of numeracy in the non-salient scenario, we predict a much weaker effect of ideology and, consequently, a much weaker interaction between ideology and numeracy. Thus, even if numeracy happens to have an effect on the preferred benefit gap in the non-salient scenario, we expect the overall effect and explanatory power of our independent variables to be weaker.
+
+> H5: *The effects of numeracy, ideology, and the interaction thereof on the preferred benefit gap will differ significantly across ideological salience.*
+
+### 2.3.2 Framing effects
+
+In this subsection, we will consider the results we can expect with regards to the impact of framing effects on the preferred benefit gap. Here we have a plethora of reference points (see section 1.2). We expect values on the preferred benefit gap to largely conform to the frame in which they were presented, i.e. in the salient, difference-per-hour scenario, we will observe mostly three-figure sums, while in the salient, difference-per-month scenario, we will generally see considerably greater sums. However, when converted to the same unit, the difference-per-month values will be significantly smaller. This is the expected effect of the hour vs. month frame. Similarly, we expect smaller values on the preferred benefit gap when dealing with loss scenarios, e.g. transfer to welfare from full-time work pay, due to inherent loss aversion bias among respondents. We base these expectations not only on Pedersen and Larsen's results, but also other studies dealing with the phenomena of decision-making biases and framing effects, detailed in sections 1.1 and 1.2.
+
+> H6a: *Respondents' preferred benefit gaps will be greater in manipulations using the income-per-hour frame.*
+
+> H6b: *Respondents' preferred benefit gaps will be smaller in manipulations using the income loss frame.*
+
+The key consideration here, however, is not the effect of frames *per se*, but its variation across numeracy. This is the subject of some discussion among numeracy researchers, as described in section 1.2. The results of prior research remain largely inconclusive due to conflicting findings across studies. Nevertheless, we believe that numeracy mitigating the impact of framing effects on decision-making is, at the very least, a distinct possibility.
+
+Many studies have shown that numeracy affects how individuals work with numbers, as well as the meaning they draw from them. Of four prominent studies dealing with the relationship of numeracy and framing effects, two indicate that numeracy *does* mitigate the impact of framing effects on decision-making (Peters et al., 2006; Dieckmann et al., 2009), one reached inconclusive results (Peters et al., 2010), and one saw numeracy having no significant effect in this relationship. (Pedersen & Larsen, 2018) However, it should once again be noted that the last-mentioned study, unlike the remaining three, used the SNS to measure numeracy. Thus, any inferences drawn from its results should be supported by a study utilising an objective numeracy test. In this case, this leads us to the conclusion that a relationship between numeracy and framing effects is more likely to exist than not. Not only are there some previous studies recording this relationship, its existence appears sensible in light of other known properties of numeracy (see section 1.2).
+
+> H7: *In both scenarios, the preferred benefit gap means of respondents will be significantly more consistent for high numerates across frames.*
+
+## 2.4 Experimental design
+
+To gather data necessary for the analysis of the posited relationship, a survey experiment was conducted with a total of `r nrow(df)` respondents. The experiment was hosted on the LimeSurvey platform[^4] and disseminated primarily to Czech undergraduate students (a more detailed sample description is included below). The survey was disseminated in two versions, with the first being intended for internal dissemination throughout the IPS. The second survey was expanded by several questions inquiring about respondents' study level and place of study, as it had originally been intended for wider dissemination outside the IPS. However, as mentioned in the introduction, this attempt had been largely unsuccessful due to the continuing restrictions due to Covid-19. Nevertheless, some responses were gathered using the second survey as well. As the structure of the surveys differs slightly, we append questions from both surveys separately as Appendices F and G. For the same reason, we also append the complete and incomplete responses from both surveys separately in Appendix B.
+
+[^4]: URL: <https://www.limesurvey.org/>
+
+Moving on to the contents of the survey itself, respondents initially entered basic information about themselves: sex, age, and---in the second survey---level and place of study. Thereafter they answered questions regarding their interest in politics and ideological position, detailed above. The Berlin Numeracy was placed at the very end of the test, after the experimental treatment.
+
+The experimental treatment had a 2 x 2 x 2 factorial design. This part of the survey experiment was in part adopted from Pedersen and Larsen's study, although it was expanded by another factor, ideological salience. Respondents were presented with a hypothetical situation comparing the differences between two sources of income; in the salient scenario, we simply adopted the work-welfare gap situation used by Pedersen and Larsen, adjusting it where appropriate. However, we also required a non-salient situation where a similar income gap could be observed. We were able to find a suitable issue also in the area of unemployment policy, namely with worker retraining programmes.
+
+In the case of retraining programmes, a disparity of incomes similar to Pedersen and Larsen's work-welfare gap can be observed in some countries, such as the Czech Republic. Here, the 2004 Employment Act differentiates between unemployment benefits and benefits paid out to workers taking part in retraining programmes. As a means of combating structural unemployment, workers lacking skills necessary to gain employment (mostly secondary-sector manual labourers) are encouraged to attend retraining programmes designed to equip jobseekers with new skills relevant in the modern labour market. (Samuelson & Nordhaus, 1995) As such, the government incentivises enrolment in retraining programmes by offering attendees somewhat higher benefits than they would otherwise receive. (Zákon č. 435/2004 Sb.)
+
+However, unlike general unemployment policy and matters typically connected thereto, the issue of worker retraining and the size of benefits afforded to attendees of retraining programmes is rarely discussed in the political arena, despite arguably being one of the most important aspects of states' active labour market policies in the present. Retraining programmes and benefits for their attendees thus represent a topic which is politically important, but does not enjoy political attention to nearly the same degree as the question of unemployment and unemployment benefits. Thus, we see that this is a prime example of an issue of relatively low ideological salience.
+
+Thus, we chose the work-welfare situation for our salient scenario and the unemployment-retraining situation for our non-salient scenario. Both scenarios were then manipulated using two factors, each consisting of two levels, leading to eight unique vignettes being generated for the survey experiment. Across manipulations, the differences in income were presented as either losses or gains (in the salient questions, this was portrayed as a worker transitioning from one source of income to the other, while in the non-salient questions, it was simply stated that the recipient of standard benefits/worker retraining programme benefits earns less/more compared to their counterpart). The final manipulation consisted of presenting these differences in two formats: difference per hour or per month, with sums adjusted accordingly.
+
+Each respondent answered one of the possible manipulations; while this drastically increased the number of required responses to infer results, it significantly lowered the possibility of results being skewed due to respondents "figuring out" the mechanism behind the questions compared to a scenario wherein, for example, a respondent answered both a salient and non-salient question. (Auspurg & Hinz, 2014)
+
+## 2.5 Data collection
+
+In this section, we will elaborate on the means by which data for our experiment was collected and outline basic information pertaining to our final sample. Firstly, we will discuss the means of collection and briefly summarise the characteristics of our sample. Following this, we will comment on the distribution of values on two of our independent variables (numeracy and ideology), as well as any outstanding issues connected thereto.
+
+Our sample consisted of `r nrow(df)` participants. The questionnaire for our survey experiment was hosted on the LimeSurvey platform and disseminated electronically. A majority of our respondents was recruited with the help of university lecturers and teachers who kindly agreed to share the survey experiment with their students (see Acknowledgements). Respondents were primarily recruited from the student body of the Institute of Political Studies (IPS) at the Charles University Faculty of Social Sciences. A majority of respondents were undergraduates, making up `r round((sum(df$studycode=="Bachelor")/nrow(df)*100))`% of the sample. Due to this method of selection, the sample was not representative of the general population--- an obvious indicator of this is the fact that only approximately `r round(sum(df$sex == "Female")/nrow(df)*100)`% of respondents were female.
+
+Of the `r nrow(df)` total respondents, the majority were aged between 19 and 22 years, with the mean respondent age across sexes being `r round(mean(df$age),2)`. On the whole, respondents exhibited a relatively high level of interest in politics: the mean value in the sample was `r round(mean(df$politics_interest),2)` (`r round(mean(df$politics_interest[df$sex=="Male"]),2)` for men and `r round(mean(df$politics_interest[df$sex=="Female"]),2)` for women). Table 2 summarises the number of respondents across numeracy levels, as well as respondents' ideological position and interest in politics.
+
+**Table 2.** *Respondent ideology and politics interest by sex and numeracy.*
+
+```{r}
+
+piv <- df %>%
+  group_by(sex, numeracy) %>%
+  summarise(count_by_numeracy =  n(),
+            mean_size_ideology = mean(ideology, na.rm = TRUE),
+            mean_politics_interest = mean(politics_interest, na.rm=T)) %>%
+   mutate(mean_size_ideology = round(mean_size_ideology,2), mean_politics_interest = round(mean_politics_interest,2))
+
+names(piv) <- c("Sex", "Numeracy", "Respondents", "Mean Ideology", "Mean Politics Interest")
+
+sexcol <- c("Total")
+numcol <- c("")
+respcol <- c(sum(piv$Respondents))
+meanidcol <- c(round(mean(df$ideology),2))
+meanpolcol <- c(round(mean(df$politics_interest),2))
+
+total <- data.frame(sexcol, numcol, respcol, meanidcol, meanpolcol)
+
+fin <- rbind(as.matrix(piv), as.matrix(total))
+
+kable(fin, booktabs=T) %>%
+  kableExtra::kable_styling(position = "center")
+
+```
+
+### 2.5.1 Numeracy
+
+The overall distribution of respondents on the numeracy scale appears somewhat skewed (see Figure 1). The mean numeracy score for the sample was `r round(mean(df$numeracy),2)`, indicating a slight bias towards high numeracy. Respondents who scored 0 points are notably underrepresented in the sample. This may have been caused by a tendency among less numerate respondents to leave the survey unfinished, as they may have been unwilling to spend time solving the mathematical problems in the numeracy test. Out of the 120 incomplete responses, 46 had been abandoned on the very last page, which contained our numeracy test (50 responses were abandoned before any information was entered whatsoever). This suggests that the leading causes of survey abandonment may have been a simple unwillingness to participate and unwillingness to devote time to the numeracy test.
+
+The unwillingness to "take a math test" leading to survey abandonment is well-documented as occurring in studies which use numeracy tests such as the Lipkus et al. test. We discussed this issue in section 1.3. Due to the relatively straightforward nature of the Berlin Numeracy Test, we did not expect abandonment to occur to such an extent. While we believe that these drawbacks do not outweigh the benefits of using an objective numeracy measure, this finding nevertheless underscores the abovementioned criticism of the objective measures by Fagerlin et al.
+
+Furthermore, it should be noted that our data also shows that the average completion time of the Berlin Numeracy Test in our survey was far longer than the 5 minutes advertised for the traditional 4-question format of the test. In fact, of the `r nrow(df)` respondents who completed the survey, only 29 had been able to answer all questions in under 5 minutes. The median time spent on the BNT portion of the our survey was slightly above 9 minutes (the average was slightly under 19 minutes). Although the leading cause of this is likely the fact that responses were collected online in an unsupervised environment, the finding is nevertheless interesting. In terms of a possible relationship between BNT completion time and numeracy, we found no significant correlation between the two, *r*(122 = 0.08)).
+
+**Figure 1.** *Numeracy scores and ideological orientation.*
+
+```{r numhistogram, fig.height=3.5}
+
+numhist <- df %>%
+  ggplot(aes(x=numeracy)) +
+  geom_histogram(aes(y = ..density..),
+                 binwidth = 1,
+                 col="black",
+                 fill="salmon",
+                 alpha=0.85)+
+  theme_economist()+
+  theme(text = element_text(size=8, family="Palatino Linotype"))+
+  labs(title="Numeracy scores\n",x="\nBNT score", y="Density\n", caption = "Source: Author's compilation; Data: Appendix C")+
+  ylim(0,0.3)
+
+idehist <- ggplot(data = df, aes(ideology)) +
+  geom_histogram(aes(y=..density..),
+                 col="black",
+                 binwidth = 1,
+                 fill="salmon",
+                 alpha=0.85) +
+  geom_density()+
+  scale_x_continuous(labels = c(1,3,5,7,9,11), breaks = c(1,3,5,7,9,11))+
+  theme_economist()+
+  theme(text = element_text(size=8,family="Palatino Linotype"))+
+  labs(title="Ideological position\n", x="\nEconomic left-right orientation", 
+       y="Density\n", caption="Source: Author's compilation; Data: Appendix C")+
+  ylim(0,0.3)
+
+grid.arrange(numhist, idehist, nrow=1)
+
+
+
+```
+
+In our sample, we observed notable differences between the numeracy scores of men and women, with men generally achieving higher scores (the mean male numeracy score was `r round(mean(df$numeracy[df$sex=="Male"]),2)`, while the mean female score was `r round(mean(df$numeracy[df$sex=="Female"]),2)`). Although this is consistent with some previous findings on differences in numeracy across sex, (NCES, 2018) the disparity observed in our sample is much more drastic. Figure 2 illustrates the differences in score distribution across sex. Due to these findings, the potential effect of sex on the preferred benefit gap is controlled for in analysis as a possible factor (see section 2.6).
+
+Generally, we see a very unequal distribution of numeracy in Figures 1 and 2. Although the Berlin Numeracy Test commonly divides respondents into groups of approximately equal size based on their score (Cokely et al., 2012), we do not observe this distribution in our sample. This may simply be the result of the relatively small size of our sample, but it could have also been caused by other factors, such as the fact that respondents had had unlimited time to complete the BNT portion of the survey---although we did not find a correlation between completion time and scores, it is nevertheless plausible that some respondents would have scored worse, had they had less time to complete the numeracy test.
+
+For purposes of graphical presenttion, we divided respondents into two groups: respondents exhibiting high numeracy (3--4 points on the BNT) and low numeracy (0--2 points). There were `r sum(df$is_numerate == "High numeracy")` respondents belonging to the former group and `r sum(df$is_numerate == "Low numeracy")` to the latter. We include alternative figures using the 5-point numeracy scale in Appendix D.
+
+**Figure 2.** *Numeracy scores and ideological position by sex.*
+
+```{r, fig.height=3.5}
+
+numdis <- df %>%
+  ggplot(aes(x=numeracy))+
+  geom_histogram(aes(y=..density.., fill=sex), position = "identity", col="black", binwidth = 1, alpha=0.7)+
+  theme_economist()+
+  theme(text=element_text(size=8,family="Palatino Linotype"), legend.title = element_text(size=8), 
+          legend.key.size = unit(5,"mm"), legend.text = element_text(size=8))+
+  scale_fill_manual(values = c("#005f85", "salmon"))+
+  labs(title="Numeracy scores", subtitle = "\nMale vs. female respondents", x="\nBNT score",
+       y="Density\n", fill="", color="", caption = "Source: Author's compilation; Data: Appendix C")
+
+idedis <- df %>%
+  ggplot(aes(x=ideology, group=factor(sex)))+
+  geom_density(aes(fill=factor(sex)), col="black", alpha=0.7)+
+  scale_x_continuous(labels = c(1,3,5,7,9,11), breaks = c(1,3,5,7,9,11))+
+  theme_economist()+
+  theme(text=element_text(size=8,family="Palatino Linotype"), legend.title = element_text(size=8), 
+          legend.key.size = unit(5,"mm"), legend.text = element_text(size=8))+
+  scale_fill_manual(values=c("#005f85", "salmon"))+
+  labs(title="Ideological position", subtitle = "\nMale vs. female respondents", x="\nEconomic left-right orientation",
+       y="Density\n", fill="", color="",caption = "Source: Author's compilation; Data: Appendix C")
+
+grid.arrange(numdis, idedis, nrow=1)
+
+cor <- cor.test(df$quest_score, df$ideology, method = c("spearman"))
+left <- df[df$ideology < 6,]
+
+```
+
+### 2.5.2 Ideology
+
+As can be inferred from Table 2, as well as Figure 1, there is a slight skew exhibited in the sample, wherein right-leaning respondents are somewhat over-represented and left-leaning ones are underrepresented. The mean ideological score in the sample was `r round(mean(df$ideology),2)`. The most frequent value found in the sample is `r modes(df$ideology)` with `r sum(df$ideology==modes(df$ideology))` respondents. While `r sum(df$ideology==7)+ sum(df$ideology==8)` respondents assigned themselves a score of 7 or 8, only `r sum(df$ideology==4)+ sum(df$ideology==5)` assigned themselves analogous scores on the left (4 or 5 points).
+
+While this does denote a rather significant skew to the Right in our sample, when we account for the relative youth of our sample (the oldest respondent had reached the ripe old age of `r max(df$age)`), this is consistent with previous findings about the political leanings of Czechs in the analogous age group (20-29 years old), where only approximately 9 per cent of respondents (excluding "don't know" answers) self-identified as belonging to the Left. Furthermore, a right-wing skew was actually observed even in the general population sample, where approximately 43 per cent of respondents (excluding "don't know" answers) self-identified as belonging to the Right, while only approximately 22 per cent self-identified as belonging to the Left. (Červenka, 2019)
+
+Taking this into account, the presence of the skew does not appear to be simply a by-product of our sampling method. Nevertheless, the right-wing skew in our sample does present some issues for us. Most notably, due to the relatively low number of respondents in our sample, we have only a relatively small amount of left-leaning respondents overall. As ideology is a key variable in our research, the lack of observations on the Left (especially the extreme Left) could have an effect on ideology's performance in analysis.
+
+As a control measure for the accuracy of our respondents' self-identification on the ideological scale, we tested the correlation of respondents' ideological score with their score on the control questions regarding unemployment (see subsection 2.2.2). We found a moderately strong correlation between the question score and respondents' left-right position, *r*(`r nrow(df)` = `r round(cor$estimate,2)`).
+
+## 2.6 Data analysis
+
+In the preceding sections, we have established the hypotheses for our research and the basic parameters of the research design used for data collection. This section will now outline the means by which our data will be analysed and our hypotheses tested.
+
+For the analysis of the effects of ideology and numeracy on the size of the preferred benefit gap, the methods used are relatively straightforward. Arguably, the most common method used to estimate the effect of one or more independent variables on a dependent variable is linear regression using the Ordinary Least Squares (OLS) method. On the most basic level, the OLS method estimates the relationship between variables by choosing such coefficients for the independent variables as to minimise the size of residuals stemming from the differences in the predicted values on the dependent variable and the actual values thereon.
+
+In the analysis of numeracy and ideology's effects, we will be dealing with a phenomenon referred to as an interaction effect. Interaction effects occur in relationships where the effect of one independent variable (in this case, ideology) is dependent on the presence---or lack thereof---of another variable (in this case, numeracy). Hypothesis 2b posits that in the salient scenario, the effect of ideology will be affected by respondents' level of numeracy. Thus, we will include the interaction of ideology and numeracy in our regression model to test this hypothesis.
+
+The variables whose effects on the preferred benefit gap we will analyse using OLS regression will be ideology, numeracy, sex, and the interaction of ideology and numeracy. While we do not expect sex to significantly affect the preferred benefit gap, we nevertheless include it in analysis as a control variable, due to some differences we had observed between men and women in our sample. (see section 2.5).
+
+The relationship being studied can be summed up using a simple regression equation:
+
+```{=tex}
+\begin{align*}
+Preferred\; Benefit\; Gap = \beta_0 + \beta_1Numeracy + \beta_2Ideology\, + \\ \beta_3Sex + \beta_4(Numeracy*Ideology)
+\end{align*}
+```
+Ideological salience will not be included as a variable in the regression equation. Doing so would significantly increase the number of variables in our models, as we would measure not only ideological salience itself, but also its interaction with ideology and numeracy. Furthermore, we would need to perform a significant transformation of the preferred benefit gap to control for the innate differences in its size across the two scenarios. Instead, we will conduct OLS regression analysis for the salient and non-salient scenarios separately. Any interaction between ideological salience, and numeracy and ideology---if present---should be apparent from a comparison of the two models.
+
+Furthermore, we deal with the question of analysing how framing effects affected the size of the preferred benefit gap. We have chosen to also utilise OLS regression in this case, as this is arguably the best method for gauging the impact of interaction effects on a relationship. In this case, we will be dealing with *two* interaction effects, as we will measure how differences in numeracy impacted the effect of both frames on the preferred benefit gap.
+
+As in the case of the regression analysis described above, we will conduct one test for each level of ideological salience. Once again, attempting to simplify the analysis by analysing all observations together would---ironically---complicate the analysis significantly.
+
+Alternatively, we could also use a series of t-tests or an ANOVA test to determine whether the various groups of interest in the sample differ between one another. However, utilising t-tests would prove impractical in this case due to the fact that we would likely have to conduct far too many for this method to be practical. ANOVA was seriously considered as a means of measuring the impact of frames and testing the corresponding hypotheses, but was ultimately decided against due to the fact that it is becoming less relevant in research in the field of political science. In addition, the presence of two interaction effects in this relationship made linear regression a far more suitable choice.
+
+In the case of framing effects, we will be analysing the impacts of the gain/loss frame, the unit frame, numeracy, the interaction between numeracy and the gain/loss frame, and the interaction between numeracy and the unit frame. The relationship is better illustrated by the following equation:
+
+```{=tex}
+\begin{align*}
+Preferred\; Benefit\; Gap = \beta_0 + \beta_1Loss\; Frame + \beta_2Unit\; Frame\, + \\ \beta_3Numeracy + \beta_4(Numeracy*Loss\; Frame)\, + \\ \beta_5(Numeracy*Unit\; Frame)
+\end{align*}
+```
+### 2.6.1 Data analysis and graph compilation software
+
+All data analysis outlined above was conducted using the RStudio application. Furthermore, for the presentation of OLS regression results, the jtools package for R was used. All graphs contained in this thesis were compiled in RStudio using the ggplot2 package. Furthermore, RStudio and R Markdown were used for the compilation of the text of this thesis. We attach the relevant RStudio code to this thesis as Appendix E.
+
+### 2.6.2 Variable transformation
+
+In this subsection, we will briefly discuss two transformations of the variables in our analysis, namely the standardisation of the preferred benefit gap values and the transformation of respondents' ideological positions.
+
+As mentioned above, the experimental question had 8 possible variations, 4 for each level of ideological salience, each containing a gain-loss frame and a unit frame. The presence of the unit frame meant that some responses would contain a respondent's preferred benefit gap in the gap-per-hour format, while some would be given in the gap-per-month format. In order to analyse the impact of the unit frame on respondents' decision-making and generally ease the analysis of our data, we need to convert all responses to one unit, in this case, the gap per hour. To do so, we divide the values of all responses in the gap-per-month format by 160 (the standard number of monthly working hours in a month).
+
+Secondly, we considered the possibility of using a log of ideology in place of the raw ideology values provided by respondents, as a means of potentially mitigating the right-wing skew in our sample. However, this did not bring the desired results, and was ultimately decided against. Further information is provided in Appendix D.
+
+\newpage
+
+# 3. Results
+
+In this chapter, we present the results of the survey experiment and relate them to our research hypotheses. Firstly, we explore the impact of framing effects on the preferred benefit gap, as well as numeracy's role in mitigating them. Following this, we present our findings regarding the relationship between numeracy, ideology, and ideological salience. Finally, we summarise our findings by grouping the most important variables from both analyses into two comprehensive models, one for each level of ideological salience.
+
+## 3.1 Framing effects and numeracy
+
+We hypothesised that the framing of the experimental question using different units and presenting the income disparity as either a gain or a loss would affect the size of the preferred benefit gap. We further posited that higher numeracy would moderate the effect of the frames.
+
+We tested the impact of frames on the preferred benefit gap and the hypothesised interaction effect between numeracy and framing effects using OLS regression. Figure 3 visualises the variation in the preferred benefit gap across manipulations for both scenarios. The results of OLS regression are presented in Tables 3 and 4.
+
+**Figure 3.** *The preferred benefit gap by manipulation and numeracy.*
+
+```{r frameboxplot, fig.height=4}
+
+frame_salient <- salient %>%
+  ggplot(aes(x=manipulation, y=sal_aggr, col=is_numerate, fill=is_numerate))+
+  geom_boxplot(alpha=0.2, width=0.5)+
+  geom_jitter(width=0.2, height=0.1)+
+  theme_economist()+
+  scale_x_discrete(labels=c("GPH", "GPM", "LPH", "LPM"))+
+  scale_color_manual(values=c("salmon", "#005f85"))+
+  scale_fill_manual(values=c("salmon", "#005f85"))+
+  theme(text = element_text(size=8, family = "Palatino Linotype"))+
+  labs(title="Salient scenario",
+       x="\nManipulation", y="Preferred benefit gap (CZK/h.)\n", col="", fill="",caption="Source: Author's compilation; Data: Appendix C")+
+  ylim(0,400)
+
+frame_nonsalient <- nonsalient %>%
+  ggplot(aes(x=manipulation, y=nsal_aggr, col=is_numerate, fill=is_numerate))+
+  geom_boxplot(alpha=0.2, width=0.5)+
+  geom_jitter(width = 0.2, height=0.1)+
+  stat_summary(fun.data = mean_sdl, fun.args = list(mult=1),
+               geom = "errorbar", position = position_dodge(width = 0.1))+
+  scale_color_manual(values=c("salmon", "#005f85"))+
+  scale_fill_manual(values=c("salmon", "#005f85"))+
+  scale_x_discrete(labels=c("GPH", "GPM", "LPH", "LPM"))+
+  theme_economist()+
+  theme(text = element_text(size=8, family="Palatino Linotype"))+
+  labs(title="Non-salient scenario",
+       x="\nManipulation", y="Preferred benefit gap (CZK/h.)\n", col="", fill="", caption="Source: Author's compilation; Data: Appendix C")
+
+grid.arrange(frame_salient, frame_nonsalient, nrow=1)
+```
+
+```{=tex}
+\newpage
+\blandscape
+```
+```{r, include=FALSE}
+
+
+frden <- lm(sal_aggr ~ type, data=df)
+frlos <- lm(sal_aggr ~ type3, data=df)
+frnum <- lm(sal_aggr ~ numeracy, data=df)
+frboth <- lm(sal_aggr ~ type + type3 + numeracy, data=df)
+frcomb <- lm(sal_aggr ~ type + type3 + numeracy + type:numeracy, data=df)
+frcomb2 <- lm(sal_aggr ~ type + type3 + numeracy + type:numeracy + type3:numeracy, data=df)
+
+frtabs <- export_summs(frden, frlos, frnum, frboth, frcomb2, scale=T, robust=F,
+                       model.names = c("(1)", "(2)", "(3)", "(4)", "(5)"),
+             coefs=c("Constant"="(Intercept)", "Loss Frame" = "typeloss", 
+                     "Unit Frame" = "type3PM", "Numeracy" = "numeracy", 
+                     "Numeracy:Loss Frame" = "typeloss:numeracy", 
+                     "Numeracy:Unit Frame" = "type3PM:numeracy"),
+             stars = c(`*` = 0.1, `**` = 0.05, `***` = 0.01))
+
+frnden <- lm(nsal_aggr ~ type, data=df)
+frnlos <- lm(nsal_aggr ~ type3, data=df)
+frnnum <- lm(nsal_aggr ~ numeracy, data=df)
+frnboth <- lm(nsal_aggr ~ type + type3 + numeracy, data=df)
+frncomb <- lm(nsal_aggr ~ type + type3 + numeracy + type:numeracy, data=df)
+frncomb2 <- lm(nsal_aggr ~ type + type3 + numeracy + type:numeracy + type3:numeracy, data=df)
+
+frtabn <- export_summs(frnden, frnlos, frnnum, frnboth, frncomb2, 
+                       scale=T, robust=F, 
+                       model.names = c("(1)", "(2)", "(3)", "(4)", "(5)"),
+             coefs=c("Constant"="(Intercept)", "Loss Frame" = "typeloss", 
+                     "Unit Frame" = "type3PM", "Numeracy" = "numeracy", 
+                     "Numeracy:Loss Frame" = "typeloss:numeracy", 
+                     "Numeracy:Unit Frame" = "type3PM:numeracy"),
+             stars = c(`*` = 0.1, `**` = 0.05, `***` = 0.01))
+
+
+```
+
+```{r}
+
+width(frtabs) <- 1.2
+wrap(frtabs) <- T
+caption(frtabs) <- "{\\bfseries Table 3.} \\itshape{OLS regression analysis - framing effects, salient scenario.}"
+caption_pos(frtabs) <- "topleft"
+top_padding(frtabs) <- 0.2
+bottom_padding(frtabs) <- 0.5
+set_col_width(frtabs, 1, 0.3)
+
+```
+
+\newpage
+
+```{r}
+
+width(frtabn) <- 1.2
+wrap(frtabn) <- T
+caption(frtabn) <- "{\\bfseries Table 4.} \\itshape{OLS regression analysis - framing effects, non-salient scenario.}"
+caption_pos(frtabn) <- "topleft"
+top_padding(frtabn) <- 0.2
+bottom_padding(frtabn) <- 0.5
+set_col_width(frtabn, 1, 0.3)
+
+```
+
+```{=tex}
+\elandscape
+\newpage
+```
+At first glance, the results corroborate our expectations for the impact of the unit frame on the preferred benefit gap. The effect of the frame is strong and significant at the p \< 0.01 level across both scenarios. Thus, we can reject the null hypothesis for H6a. At the same time, the effect of gain-loss framing appears to be much smaller. In the salient scenario, it appears much weaker than the effect of the unit frame and is only statistically significant at the more generous *p* \< 0.1 level. In the non-salient scenario, we see a weaker effect lacking statistical significance altogether. Under these conditions, we cannot reject the null hypothesis for H6b.
+
+Looking at the effect of numeracy, we find no effect of numeracy on the preferred benefit gap in either scenario. Similarly, looking at the interaction between numeracy and the two frames, the model shows no effect. Although Figure 2 hints at a possible difference between high and low numerates in the non-salient scenario, this potential effect of numeracy does not achieve any notable statistical significance in the model. Hypothesis 7 posited that high numerates' preferred benefit gaps would exhibit consistency across frames. As such, this should manifest itself in both observable and statistically significant differences between the preferred benefit gap means of high and low numerates. In this case, we do not reject the null hypothesis for H7.
+
+## 3.2 Numeracy and ideology
+
+We examined the relationship between numeracy and ideology across two levels of ideological salience. In the salient scenario, we posited that respondents' numeracy would affect the interaction between their ideological position and preferred benefit gap. In the non-salient scenario, we expected to see no significant variation on the preferred benefit gap across ideology and, thus, also no significant interaction effect between numeracy and ideology. Tables 5 and 6 show results of OLS regression for both scenarios.
+
+```{=tex}
+\newpage
+\blandscape
+```
+```{r OLSsetup, include=FALSE}
+
+num <- lm(sal_aggr ~ numeracy, data=df)
+ide <- lm(sal_aggr ~ ideology, data=df)
+sex <- lm(sal_aggr ~ sex, data=df)
+numid <- lm(sal_aggr ~ numeracy+ideology, data=df)
+comb <- lm(sal_aggr ~ numeracy+ideology+numeracy:ideology, data=df)
+comb2 <- lm(sal_aggr ~ numeracy+ideology+numeracy:ideology+sex, data=df)
+
+maintabs <- export_summs(num, ide, sex, numid, comb, comb2, scale = T, robust = F,
+             model.names = c("(1)", "(2)", "(3)", "(4)", "(5)", "(6)"), 
+             coefs=c("Constant" = "(Intercept)", "Numeracy" = "numeracy",
+                     "Ideology" = "ideology", "Sex" = "sexMale", 
+                     "Numeracy:Ideology" = "numeracy:ideology"),
+             stars = c(`*` = 0.1, `**` = 0.05, `***` = 0.01))
+
+nnum <- lm(nsal_aggr ~ numeracy, data=df)
+nide <- lm(nsal_aggr ~ ideology, data=df)
+nsex <- lm(nsal_aggr ~ sex, data=df)
+nnumid <- lm(nsal_aggr ~ numeracy+ideology, data=df)
+ncomb <- lm(nsal_aggr ~ numeracy+ideology+numeracy:ideology, data=df)
+ncomb2 <- lm(nsal_aggr ~ numeracy+ideology+numeracy:ideology+sex, data=df)
+
+maintabn <- export_summs(nnum, nide, nsex, nnumid, ncomb, ncomb2, 
+                         scale = T, robust = F,
+                         coefs=c("Constant" = "(Intercept)", 
+                                 "Numeracy" = "numeracy", 
+                                 "Ideology" = "ideology",
+                                 "Sex" = "sexMale",
+                                 "Numeracy:Ideology" = "numeracy:ideology"),
+             stars = c(`*` = 0.1, `**` = 0.05, `***` = 0.01),
+             model.names = c("(1)", "(2)", "(3)", "(4)", "(5)", "(6)"))
+
+
+```
+
+```{r maintabs}
+
+width(maintabs) <- 1.2
+wrap(maintabs) <- T
+caption(maintabs) <- "{\\bfseries Table 5.} \\itshape{OLS regression analysis - numeracy and ideology, salient scenario.}"
+caption_pos(maintabs) <- "topleft"
+top_padding(maintabs) <- 0.2
+bottom_padding(maintabs) <- 0.5
+set_col_width(maintabs, 1, 0.3)
+
+```
+
+\newpage
+
+```{r maintabn}
+
+width(maintabn) <- 1.2
+wrap(maintabn) <- T
+caption(maintabn) <- "{\\bfseries Table 6.} \\itshape{OLS regression analysis - numeracy and ideology, non-salient scenario.}"
+caption_pos(maintabn) <- "topleft"
+top_padding(maintabn) <- 0.2
+bottom_padding(maintabn) <- 0.5
+set_col_width(maintabn, 1, 0.3)
+
+```
+
+All continuous predictors are mean-centered and scaled by 1 standard deviation. \*\*\* p \< 0.01; \*\* p \< 0.05; \* p \< 0.1.
+
+```{=tex}
+\elandscape
+\newpage
+```
+```{r, include=FALSE}
+
+sumcomb <- summary(comb2)
+sumncomb <- summary(ncomb2)
+
+sumide <- summary(comb)
+
+```
+
+Comparing the above tables, a clear difference between the salient and non-salient scenarios can be seen practically at first glance. Namely, we see significant differences in the R^2^ values across the two scenarios, as well as stark differences between the effects of the variables in our model. Although it is generally wise to exercise caution in comparing the R^2^ values of models using different samples, it is doubtful that the contrast between the explanatory abilities of the two models is a product of chance or differences between the two parts of our overall sample.
+
+Hypothesis 5 posited that the effects of numeracy, ideology, and their interaction would differ across ideological salience, which we observe in our model, allowing us to reject the null hypothesis for H5. Additionally, as hypothesis 3 posited that no effect of ideology would be observed in the non-salient scenario, we reject the null hypotheses for H3. Finally, having also observed no effect of numeracy in the non-salient scenario, we reject the null hypothesis for H4b.
+
+### 3.2.1 Salient scenario
+
+Now let us examine the salient scenario in more detail. Figure 4 visualises the relationship between ideology and the preferred benefit gap across both scenarios. We have already established that ideology does not affect the preferred benefit gap in the non-salient scenario. Meanwhile, in the salient scenario, the effect of ideology is clear and statistically significant at the *p* \< 0.05 level when sex is not included, and at the *p* \< 0.1 level with sex included in the model.
+
+**Figure 4.** *The preferred benefit gap across ideology.*
+
+```{r, fig.height=4}
+
+b1 <- df %>%
+  ggplot(aes(x=ideology, y=sal_aggr))+
+  geom_point(aes(col="#00887d"),size=2,shape=16)+
+  geom_jitter(aes(col="#00887d"), height = 1)+
+  geom_smooth(aes(col="#00887d"),method = "lm")+
+  scale_color_manual(values=c("salmon"))+
+  theme_economist()+
+  theme(text=element_text(size=8, family="Palatino Linotype"), legend.position = "none")+
+  labs(title = "Salient scenario", x = "Ideological position", y="Preferred benefit gap (CZK/h.)\n", caption = "Source: Author's compilation; Data: Appendix C")+
+  ylim(0,400)
+
+b2 <- df %>%
+  ggplot(aes(x=ideology, y=nsal_aggr, col="gold"))+
+  geom_point(size=2,shape=16)+
+  geom_jitter(height = 1)+
+  geom_smooth(method = "lm")+
+  scale_color_manual(values=c("salmon"))+
+  theme_economist()+
+  theme(text=element_text(size=8, family="Palatino Linotype"), legend.position = "none")+
+  labs(title = "Non-salient scenario", x = "Ideological position", y="Preferred benefit gap (CZK/h.)\n", caption = "Source: Author's compilation; Data: Appendix C")+
+  ylim(0,60)
+
+grid.arrange(b1,b2,nrow=1)
+
+
+```
+
+This underperformance of ideology may simply be caused by the presence of far too many variables, including an interaction effect, in a model with relatively few observations. Thus, we can reasonably conclude that ideology *does* influence decision-making on issues of high ideological salience to some extent. The relatively low significance of ideology in the model can most likely be attributed to an insufficient number of responses, much like in the case of the loss frame.
+
+What is somewhat puzzling is how ideology *actually* affected the preferred benefit gap; as shown in Figure 4, as we move to the ideological Right, the preferred benefit gap decreases, suggesting that more right-leaning respondents prefer higher unemployment benefits. This is particularly peculiar as this result not only contradicts our expectations and Pedersen and Larsen's results, but the "conventional wisdom" of politics, which says that the ideological Right typically supports lowering unemployment benefits. In this case, we cannot reject the null hypothesis for H1, which expected the differences in the preferred benefit gap across ideology to conform to this "axiom". We further discuss the possible reasons for this finding in the following chapter.
+
+**Figure 5.** *The preferred benefit gap across ideology and numeracy.*
+
+```{r, fig.height=4}
+
+a1 <- df %>%
+  ggplot(aes(x=ideology, y=sal_aggr, group = factor(is_numerate)))+
+  geom_point(aes(color = factor(is_numerate)), size=2, shape=16)+
+  geom_jitter(aes(color=factor(is_numerate)), height = 1)+
+  geom_smooth(aes(col=factor(is_numerate)), method = "lm")+
+  scale_color_manual(values=c("salmon", "#005f85"))+
+  theme_economist()+
+  theme(text=element_text(size=8, family="Palatino Linotype"))+
+  labs(title = "Salient scenario", x = "Ideological position", y="Preferred benefit gap (CZK/h.)\n",
+       color="", caption = "Source: Author's compilation; Data: Appendix C")+
+  ylim(0,400)
+
+
+a2 <- df %>%
+  ggplot(aes(x=ideology, y=nsal_aggr, group = factor(is_numerate)))+
+   geom_point(aes(color = factor(is_numerate)), size=2, shape=16)+
+  geom_jitter(aes(color=factor(is_numerate)), height = 1)+
+  geom_smooth(aes(col=factor(is_numerate)), method = "lm")+
+  scale_color_manual(values=c("salmon", "#005f85"))+
+  theme_economist()+
+  theme(text=element_text(size=8, family="Palatino Linotype"))+
+  labs(title = "Non-salient scenario", x = "Ideological position", y="Preferred benefit gap (CZK/h.)\n",
+       color="", caption = "Source: Author's compilation; Data: Appendix C")+
+  ylim(0,60)
+
+grid.arrange(a1,a2,nrow=1)
+
+```
+
+The effect of ideology *per se*, however, is only of secondary interest to us. More importantly, we seek to explore the interaction effect between ideology and numeracy. In Table 5, we see that the effect is strong and significant at the *p* \< 0.01 level. Specifically, we see practically no effect of ideology on the preferred benefit gap among low numerates, but observe an especially strong effect among high numerates. This is illustrated in Figure 5. The same relationship is also plotted for the non-salient scenario, where we see that practically no difference exists between high and low numerates. Hypothesis 2a posited that ideology would have a strong effect on the preferred benefit gap, while hypothesis 2b predicted a greater effect among high numerates; we can reject the null hypotheses for both.
+
+## 3.3 Final models
+
+Having examined both the impact of framing effects and the relationship between numeracy, ideology, and ideological salience, we have made noteworthy findings about the role of numeracy (or lack thereof) in the former case and ideological salience in the latter. What remains is to present a more complete overview of our findings, namely by combining the two areas of our research into a unified model. We do so in Tables 7 and 8, which present the results of OLS regression analysis for selected variables.
+
+```{=tex}
+\newpage
+\blandscape
+```
+```{r, include=FALSE}
+
+frld <- lm(sal_aggr ~ type + type3, data=df)
+frfin <- lm(sal_aggr ~ numeracy + ideology + numeracy:ideology + type + type3, data=df)
+frfin2 <- lm(sal_aggr ~ numeracy + ideology + numeracy:ideology + type + type3 + type:numeracy + type3:numeracy, data=df)
+
+fintabs <- export_summs(numid, comb, frld, frfin, robust=F, scale=T, 
+                        model.names=c("(1)", "(2)", "(3)", "(4)"),
+             coefs=c("Constant" = "(Intercept)", "Numeracy" = "numeracy",
+                     "Ideology" = "ideology", 
+                     "Numeracy:Ideology" = "numeracy:ideology", 
+                     "Loss Frame" = "typeloss", "Unit Frame" = "type3PM"),
+             stars = c(`*` = 0.1, `**` = 0.05, `***` = 0.01))
+
+frnld <- lm(nsal_aggr ~ type + type3, data=df)
+frnfin <- lm(nsal_aggr ~ numeracy + ideology + numeracy:ideology + type+ type3, data=df)
+frnfin2 <- lm(nsal_aggr ~ numeracy + ideology + numeracy:ideology + type + type3 + type:numeracy + type3:numeracy, data=df)
+
+fintabn <- export_summs(nnumid, ncomb, frnld, frnfin, scale=T, robust=F, 
+                        model.names=c("(1)", "(2)", "(3)", "(4)"),
+              coefs=c("Constant" = "(Intercept)", "Numeracy" = "numeracy", 
+                      "Ideology" = "ideology", 
+                      "Numeracy:Ideology" = "numeracy:ideology", 
+                      "Loss Frame" = "typeloss", "Unit Frame" = "type3PM"),
+             stars = c(`*` = 0.1, `**` = 0.05, `***` = 0.01))
+
+sumfrfin <- summary(frfin)
+sumfrnfin <- summary(frnfin)
+
+```
+
+```{r fintabs}
+
+width(fintabs) <- 1.2
+wrap(fintabs) <- T
+caption(fintabs) <- "{\\bfseries Table 7.} \\itshape{OLS regression analysis - final model, salient scenario.}"
+caption_pos(fintabs) <- "topleft"
+top_padding(fintabs) <- 0.2
+bottom_padding(fintabs) <- 0.5
+set_col_width(fintabs, 1, 0.3)
+
+```
+
+\newpage
+
+```{r fintabn}
+
+width(fintabn) <- 1.2
+wrap(fintabn) <- T
+caption(fintabn) <- "{\\bfseries Table 8.} \\itshape{OLS regression analysis - final model, non-salient scenario.}"
+caption_pos(fintabn) <- "topleft"
+top_padding(fintabn) <- 0.2
+bottom_padding(fintabn) <- 0.5
+set_col_width(fintabn, 1, 0.3)
+
+```
+
+```{=tex}
+\elandscape
+\newpage
+```
+The final models further underscore our findings in the two previous analyses. We find a difference of `r round(sumfrfin$r.squared-sumfrnfin$r.squared,2)` between the R^2^ values with all variables included. In the salient scenario, we achieved an R^2^ value of `r round(sumfrfin$r.squared,2)`, indicating that our final model for the salient scenario has a relatively strong explanatory power. The adjusted R^2^ values were `r round(sumfrfin$adj.r.squared,2)` and `r round(sumfrnfin$adj.r.squared,2)` for the final models of the salient and non-salient scenarios respectively.
+
+In both scenarios, the individual effects of the variables tested remain largely identical to what we have observed in the previous two analyses. In the absence of sex, ideology retained statistical significance at the *p* \< 0.05 level in the salient scenario. A notable exception did, however, occur in the salient scenario: the gain-loss frame was stronger than in the previous model and statistically significant at the *p* \< 0.05 level in the final model. Unfortunately, we do not observe a similar trend in the non-salient scenario.
+
+The clear underperformance of the gain-loss frame in both scenarios is a question worth considering. A plausible explanation may be that due to the fact that the framing of the gain or loss is not as strong as in the case of the unit frame. In the unit frame, the sum presented in the income-per-month manipulation is 160 times larger than the one presented in its income-per-hour counterpart. Comparatively, the difference between the sums in the gain and loss manipulations is much smaller. Especially in the non-salient scenario, where---in the income-per-hour manipulation---the difference between the two sources of income is counted in single digits, this may make the effect of the gain-loss frame harder to measure. Due to the less pronounced impact of this frame, a greater number of observations may be needed to observe it properly.
+
+Summing up, our final models show clear differences between the salient and non-salient scenarios. We see a strong effect of ideology in the salient scenario, as well as a strong interaction between ideology and numeracy. In the non-salient scenario, we find that none of our variables significantly affected the preferred benefit gap. With regards to framing effects, we have been able to observe a strong and significant effect of the unit frame, while the gain-loss frame only fared well in the salient scenario. In the next chapter, we will discuss these results and their implications for existing and future research.
+
+\newpage
+
+# 4. Discussion
+
+Our thesis contributes to the growing canon of numeracy literature in several ways. In this chapter, we summarise our results and relate them to previous findings in numeracy research, as well as ongoing debates in the field. The main objective of this thesis was to examine the role of numeracy in political decision-making. More specifically, we studied the relationship between numeracy, ideology, and ideological salience. Previous studies by Kahan et al. (2013), and Pedersen and Larsen (2018) indicated that in politics, numeracy's role was largely determined by ideology. However, another study by Mérola and Hitt (2016) suggested that this was not entirely the case. Instead, numeracy could---in some cases---help individuals overcome simple ideological cues and make more optimal decisions about policy based on facts.
+
+We posited that the key difference between these two situations was the level of ideological salience of the issues being presented to the respondents of the respective studies. While Kahan et al.'s study dealt with the issue of restrictions on firearm ownership, and Pedersen and Larsen's study dealt with the issue of unemployment, Mérola and Hitt presented to their respondents arguments regarding the usage of alternative punishments in criminal justice, a significantly less salient issue compared to the other two. As such, we expected that as the importance of individuals' ideological leanings lessened with lower salience, the relationship between numeracy and ideology, as well as the effect of numeracy itself, would change.
+
+Our expectations were partly fulfilled, as we observed stark differences between the behaviour of our independent variables across ideological salience. Quite logically, we saw a very strong effect of ideology with high salience, but not with low salience. Consequently, the strong interaction effect between numeracy and ideology observed in the former scenario was not present in the latter. However, we found no standalone effect of numeracy in either scenario. Thus, our findings do not corroborate those of Mérola and Hitt. This does not invalidate them *per se*; rather, it may simply mean that the differences between high and low numerates observed by Mérola and Hitt can be observed when individuals evaluate arguments or solve problems, but not when they formulate concrete policy preferences.
+
+It is worth noting that while our findings did live up to our expectations regarding the importance of ideological salience, the observed behaviour of our independent variables---most notably ideology---in the salient scenario ran contrary to not only our expectations, but conventional wisdom regarding differences between the political Left and Right on the issue of unemployment. We observed that right-leaning respondents favoured a smaller gap between unemployment benefits than left-leaning respondents. This finding is most puzzling and may be interpreted in myriad ways. One possible interpretation is simply that a mistake had occurred in the wording or framing of the survey experiment, causing confusion ultimately leading to the observed results. However, no such mistake is apparent. It is more likely that another aspect of our survey experiment was at fault, namely our choice of sample.
+
+As detailed in section 2.5, our sample was primarily composed of young undergraduates, who we can reasonably infer have relatively little experience with unemployment compared to the general population. Furthermore, we can assume that the average respondent in our sample formed their political opinions approximately within the last five years, a time of very low unemployment, which could lead them to develop different views on unemployment than older generations. Another factor could well be the right-wing skew in our sample. However, as we have established in subsection 2.5.2, this skew may not necessarily be a result of our sampling method, but a wider phenomenon. Nevertheless, it may be the case that the specific nature of our sample is responsible for these findings, and that attitudes regarding the work-welfare gap *do* conform to conventional expectations among the general population. However, the applicability of these expectations to beliefs about unemployment policy in the Czech Republic should not be assumed, but tested.
+
+A further explanation borrows from the findings made by Kahan et al., who observed that high numerates struggled to correctly solve problems involving numbers when such problems were presented as related to a highly ideologically salient issue. Thus, an interaction of ideology and high numeracy may have negatively affected respondents' judgement. This would have significant implications for our understanding of numeracy as a decision-making tool---it has hitherto been assumed that being highly numerate offers an advantage, but consistent findings showing that high numerates are *more* vulnerable to biases stemming from ideological (and possibly other) beliefs would very much shake this narrative, at least in areas such as politics. Ultimately, we can only speculate as to whether the observed results had been caused by an error or whether they are reflective of some phenomenon hitherto unaccounted for. We present these possible interpretations as plausible ways of accounting for our findings and invite further research on this issue.
+
+Perhaps more importantly, odd as these findings may be, they should not detract from a much more significant phenomenon observed in our experiment: namely, a very clear distinction between the decision-making of high and low numerates. This distinction corroborates Pedersen and Larsen's claims that numeracy serves as a means of better expressing one's ideological beliefs and policy preferences using numbers. Furthermore, although we did not observe an effect of numeracy itself on the preferred benefit gap, even the presence of an interaction effect clearly shows that in voters' decision-making, numeracy *does* play a role and, as such, should not be discounted from further research on the matter.
+
+A secondary aim of this thesis was to help resolve an ongoing debate in numeracy research regarding the increased resistance of high numerates to so-called framing effects. While some early studies such as those by Peters et al. (2006) and Dieckmann et al. (2009) suggested that such high numerates do indeed possess this resistance, subsequent studies, namely Peters et al. (2010), as well as Pedersen and Larsen's, have failed to replicate these results. In our own experiment, we saw (with the exception of the gain-loss frame in the non-salient scenario) a clear effect of frames on the sizes of the preferred benefit gap. However, we did not see a difference in the effect of the frames across numeracy in any of the scenarios.
+
+Our findings thus suggest that the resistance to framing effects among high numerates observed by other studies---while plausible in some scenarios---does not extend to all situations where quantitative information is present. It is possible that in situations where individuals analyse information, rather than formulate their own preferences, this resistance does indeed exist. However, such speculation is beyond the scope of this study. Our results show no relationship between numeracy and the impact of framing, thereby adding further evidence to the claim that numeracy does not mitigate the impact of framing effects on decision-making.
+
+\newpage
+
+# Conclusion
+
+In this thesis, we examined the role of numeracy in the formulation of individuals' policy preferences. Previous scholarship has largely neglected the study of numeracy as a factor in political decision-making, with only a handful of studies being published in the last 10 years. Two studies showed numeracy acting in subservience to ideology. However, another study's findings suggested that this effect did not apply to all cases.
+
+We posited that the interaction of ideology and numeracy was largely dependent on the ideological salience of an issue---the more controversial the question, the greater the hold of ideology over numeracy would be. We tested our hypotheses by means of a survey experiment where we measured the effect of several variables on the preferred benefit gap---the difference between two sources of income deemed reasonable by respondents.
+
+The data from our experiment shed a considerable amount of light on what the role of numeracy in political decision-making might be. Firstly, we found that when faced with questions of relative political importance, such as the size of unemployment benefits, highly numerate individuals will differ more significantly in their preferences across ideology from less numerate ones. We thus found that numeracy is an important tool for individuals to more accurately express some of their views.
+
+Secondly, we found stark differences between the behaviour of our respondents across ideological salience. While numeracy did indeed act in subservience to ideology in the highly salient scenario (as expected), it had had no effect on respondents' decision-making in the non-salient scenario, and there were virtually no differences in the policy preferences of low and high numerates in this scenario. This suggests that while there are differences in the effect of numeracy on decision-making across different levels of ideological salience, the effect of numeracy on decision-making *per se* may be less pronounced than previously assumed.
+
+Finally, we examined the issue of numeracy's relationship with framing effects, a topic of some controversy in numeracy research. Our findings showed no differences in the impact of framing effects on respondents' decision-making. Thus, the claim that high numeracy acts as a tool for mitigating the effects of framing on decision-making was not verified.
+
+In conducting our research, we have been hampered by several limitations. Most notably, the collection of responses for our survey experiment was drastically hampered by restrictions related to the ongoing Covid-19 pandemic, which led to fewer opportunities for the dissemination of our survey, ultimately only allowing us to collect approximately 50 per cent of our desired number of responses. Regrettably, this response deficiency has had some effect on our results, although we have still been able to make potentially interesting findings even with a diminished sample.
+
+Secondly, the undergraduate level of study did not afford us access to resources (particularly financial ones) which would allow us to recruit a representative sample for our survey experiment; instead, we opted for a much less optimal method of response collection, which consequently decreases the external validity of our findings.
+
+The limitations of our research ultimately tie into recommendations for future research. Firstly, future researchers may wish to test whether our results will hold up when a representative sample is used. Secondly, future research ought to examine the issue of attitudes to unemployment in the Czech population, as discussed in the previous chapter. Furthermore, as we did not observe an effect of numeracy on decision-making with low ideological salience (unlike Mérola and Hitt), we deem it worthwhile to dedicate a future study to explaining and resolving the apparent contradiction between these two findings. Stemming from this is also a possible inquiry into differences between decision-making as problem-solving and decision-making as formulating preferences, whose existence we have intimated in the previous chapter. A comparison of individuals' decision-making and the role of numeracy in these two situations may reveal interesting insights.
+
+Finally, as we have mentioned many times in this thesis, political scientists only concern themselves with numeracy very rarely. Yet as numbers come to play an increasingly greater role in politics, investigations into how voters understand quantitative information and to what extent their decisions are influenced by this understanding (or lack thereof) will inevitably have to be made. A wide range of possible situations come to mind. Possible avenues of research here include inquiries into whether numeracy affects the understanding of opinion polls or whether it plays a factor in tactical voting. Many similar questions can be posed, and it is our hope that in time, numeracy research in political science will become a thriving field.
+
+\newpage
+
+# Summary
+
+This thesis concerned itself with the role played by numeracy in political decision-making. We expanded upon previous research by examining how the role of numeracy changed with the ideological salience of an issue---the extent to which an issue is deemed politically controversial. Furthermore, we also weighed in on the debate regarding the relationship of numeracy and framing effects.
+
+Firstly, we outlined the state of knowledge in the field of numeracy research, both in political science and elsewhere. We commented on the limitations of previous studies and proposed a way to potentially reconcile their findings by examining a possible interaction between numeracy and ideological salience. We also briefly commented on the different types of numeracy measures used by researchers in the field and provided a brief comparison.
+
+Secondly, we set the main aims and research questions of our thesis, and described the research methods we would use to test our hypotheses. Furthermore, we provided a brief overview of the sample we would use for analysis.
+
+In the following chapter, we presented the results of our research in three parts, firstly discussing the relationship of numeracy and framing effects. Having found no evidence that high numeracy mitigates the impact of framing effects on decision-making, we moved on to the second part, which concerned the results of the main part of our research. There, we found that ideology and numeracy do interact very strongly with high ideological salience, as shown by previous studies. However, we found no effect of numeracy whatsoever with low salience. Thirdly, we presented a final model including all of the important variables in our study.
+
+Finally, we summarised our results by means of a discussion and conclusion, where we related our findings to the results of previous studies in the field and discussed their implications for numeracy research. We also outlined several areas where future research into the role of numeracy in political decision-making can be expanded.
+
+\newpage
+
+# List of references
+
+**Books and academic journal articles:**
+
+AUSPURG, Katrin and Thomas HINZ. *Factorial Survey Experiments*. USA: Sage Publishing, 2014. ISBN 9781452274188.
+
+BÄCK, HANNA, Marc DEBUS, and Patrick DUMONT. Who gets what in coalition governments? Predictors of portfolio allocation in parliamentary democracies. *European Journal of Political Research.* [online]. 2011, 50(4), 441-478 $$cit. 2020-05-10$$. DOI: 10.1111/j.1475-6765.2010.01980.x. ISSN 03044130. Retrieved from: <http://doi.wiley.com/10.1111/j.1475-6765.2010.01980.x>
+
+COKELY, Edward T., Mirta GALESIC, Eric SCHULZ, Saima GHAZAL, and Rocio GARCIA-RETAMERO. Measuring Risk Literacy: The Berlin Numeracy Test. *Judgment and Decision Making*. USA: Society for Judgment and Decision Making, 2012, 7(1), 25-47. ISSN 1930-2975. Retrieved from: <http://journal.sjdm.org/11/11808/jdm11808.pdf>
+
+DIECKMANN, Nathan F., Paul SLOVIC, and Ellen M. PETERS. The Use of Narrative Evidence and Explicit Likelihood by Decisionmakers Varying in Numeracy. *Risk Analysis* $$online$$. 2009, 29(10), 1473-1488 $$cit. 2020-03-26$$. DOI: 10.1111/j.1539-6924.2009.01279.x. ISSN 02724332. Retrieved from: <http://doi.wiley.com/10.1111/j.1539-6924.2009.01279.x>
+
+DUNNING, David, Chip HEATH, and Jerry M. SULS. Flawed Self-Assessment: Implications for Health, Education, and the Workplace. *Psychological Science in the Public Interest* $$online$$. 2004, 5(3), 69--99 $$cit. 2021-04-22$$. DOI: 10.1111/j.1529-1006.2004.00018.x. Retrieved from: <https://journals.sagepub.com/doi/10.1111/j.1529-1006.2004.00018.x>
+
+ECKER, Alejandro, Thomas M. MEYER, and Wolfgang C. MÜLLER. The distribution of individual cabinet positions in coalition governments: A sequential approach. *European Journal of Political Research* $$online$$. 2015, 54(4), 802-818 $$cit. 2020-05-10$$. DOI: 10.1111/1475-6765.12108. ISSN 03044130. Retrieved from: <http://doi.wiley.com/10.1111/1475-6765.12108>
+
+EHRLINGER, J., W.O. READINGER, and B. KIM. Decision-Making and Cognitive Biases. Encyclopedia of Mental Health $$online$$. Elsevier, 2016, 2016, , 5-12 $$cit. 2020-04-23$$. DOI: 10.1016/B978-0-12-397045-9.00206-8. ISBN 9780123977533. Retrieved from: <https://linkinghub.elsevier.com/retrieve/pii/B9780123970459002068>
+
+FAGERLIN, Angela, Brian J. ZIKMUND-FISHER, Peter A. UBEL, Aleksandra JANKOVIC, Holly A. DERRY, and Dylan M. SMITH. Measuring Numeracy without a Math Test: Development of the Subjective Numeracy Scale. *Medical Decision Making* $$online$$. 2007, 27(5), 672-680 $$cit. 2020-03-25$$. DOI: 10.1177/0272989X07304449. ISSN 0272-989X. Retrieved from: <http://journals.sagepub.com/doi/10.1177/0272989X07304449>
+
+KAHAN, Dan M., Ellen PETERS, Erica Cantrell DAWSON, and Paul SLOVIC. Motivated Numeracy and Enlightened Self-Government. *Behavioural Public Policy* $$online$$. 2013, 1, 54--86. $$cit. 2020-05-09$$. DOI: 10.2139/ssrn.2319992. ISSN 1556-5068. Retrieved from: <https://dx.doi.org/10.2139/ssrn.2319992>
+
+LIPKUS, Isaac M., Greg SAMSA, and Barbara K. RIMER. General Performance on a Numeracy Scale among Highly Educated Samples. *Medical Decision Making* $$online$$. 2016, 21(1), 37-44 $$cit. 2020-03-25$$. DOI: 10.1177/0272989X0102100105. ISSN 0272-989X. Retrieved from: <http://journals.sagepub.com/doi/10.1177/0272989X0102100105>
+
+MÉROLA, Vittorio and Matthew P. HITT. Numeracy and the Persuasive Effect of Policy Information and Party Cues. *Public Opinion Quarterly*. 2016, 80(2), 554-562. DOI: s10.1093/poq/nfv051. ISSN 0033-362X. Retrieved from: <https://academic.oup.com/poq/article-lookup/doi/10.1093/poq/nfv051>
+
+NELSON, Wendy, Valerie F. REYNA, Angela FAGERLIN, Isaac LIPKUS, and Ellen PETERS. Clinical Implications of Numeracy: Theory and Practice. *Annals of Behavioural Medicine*. 2008, 35(3), 261--274 $$cit. 2021-04-22$$. DOI: 10.1007/s12160-008-9037-8. Retrieved from: <https://academic.oup.com/abm/article/35/3/261/4561499>
+
+PEDERSEN, Rasmus T. and Martin V. LARSEN. Putting a Number on Preferences: How Numerical Attitudes Are Shaped by Ideology and Equivalency Framing. *International Journal of Public Opinion Research*. United Kingdom: Oxford University Press, 2018, 1-21. DOI: 10.1093/ijpor/edy020. Retrieved from: <https://academic.oup.com/ijpor/article-abstract/31/3/528/5233862>
+
+PETERS, Ellen, Daniel VÄSTFJÄLL, Paul SLOVIC, C.K. MERTZ, Ketti MAZZOCCO, and Stephan DICKERT. Numeracy and Decision Making. *Psychological Science* $$online$$. 2006, 17(5), 407-413 $$cit. 2020-03-25$$. DOI: 10.1111/j.1467-9280.2006.01720.x. ISSN 0956-7976. Retrieved from: <http://journals.sagepub.com/doi/10.1111/j.1467-9280.2006.01720.x>
+
+PETERS, Ellen, P. Sol HART, and Liana FRAENKEL. Informing Patients: The Influence of Numeracy, Framing, and Format of Side Effect Information on Risk Perceptions. *Medical Decision Making* $$online$$. 2011, 31(3), 432-436 $$cit. 2020-04-24$$. DOI: 10.1177/0272989X10391672. ISSN 0272-989X. Retrieved from: <http://journals.sagepub.com/doi/10.1177/0272989X10391672>
+
+PETERS, Ellen. Beyond Comprehension: The Role of Numeracy in Judgments and Decisions. *Current Directions in Psychological Science* $$online$$. 2012, 21(1), 31-35 $$cit. 2020-03-25$$. DOI: 10.1177/0963721411429960. ISSN 0963-7214. Retrieved from: <http://journals.sagepub.com/doi/10.1177/0963721411429960>
+
+SAMUELSON, Paul Anthony and William D. NORDHAUS. *Ekonomie*. 2nd ed. Praha: Svoboda, 1995. ISBN 80-205-0494-x.
+
+SCHWARTZ, Lisa M., Stephen WOLOSHIN, William C. BLACK, and H. Gilbert WELCH. The Role of Numeracy in Understanding the Benefit of Screening Mammography. *Annals of Internal Medicine* $$online$$. 1997, 127(11) $$cit. 2020-03-27$$. DOI: 10.7326/0003-4819-127-11-199712010-00003. ISSN 0003-4819. Retrieved from: <http://annals.org/article.aspx?doi=10.7326/0003-4819-127-11-199712010-00003>
+
+**Online publications and news articles:**
+
+ČERVENKA, Jan. *Sebezařazení na levopravé škále politické orientace - červen 2019*. $$online$$ Praha: CVVM, 2019. $$cit. 2021-04-23$$. Retrieved from: <https://cvvm.soc.cas.cz/cz/tiskove-zpravy/politicke/politicke-ostatni/4996-sebezarazeni-na-levoprave-skale-politicke-orientace-cerven-2019>
+
+PILNÁČEK, Matouš and Paulína TABERY. *Témata voleb do PSP ČR a prezidentských voleb*. $$online$$ Praha: CVVM, 2018. $$cit. 2021-03-28$$. Retrieved from: <https://simar.cz/assets/media/files/assets/uploads/02_Pilnacek_Tabery_Temata_voleb_4.pdf>
+
+*Data Point: Literacy and Numeracy Skills of U.S. Men and Women*. National Centre for Education Statistics (NCES) $$online$$. August 2018 $$cit. 2021-4-29$$. Retrieved from: <https://nces.ed.gov/pubs2018/2018164.pdf>
+
+*Jaká témata do předvolební kampaně? Podle lidí je důležité zdravotnictví nebo důchodová politika*. ČT24 $$online$$. 2. 7. 2017 $$cit. 2020-05-10$$. Retrieved from: <https://ct24.ceskatelevize.cz/domaci/2167279-jaka-temata-do-predvolebni-kampane-podle-lidi-je-dulezite-zdravotnictvi-nebo>
+
+*The Behavioral Biases of Individuals*. CFA Institute $$online$$. 2021 cit. 2021-4-28. Retrieved from: <https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/behavioral-biases-individuals>
+
+**Legal acts:**
+
+Zákon č. 435/2004 Sb., o nezaměstnanosti. In: Sbírka zákonů. 13. 5. 2004.
+
+**Data analysis software:**
+
+ALLAIRE, JJ, Jeffrey HORNER, Yihui XIE, Vicent MARTI, and Natacha PORTE. markdown: Render Markdown with the C Library 'Sundown'. 2019. URL: <https://CRAN.R-project.org/package=markdown>
+
+LONG, Jacob A. jtools: Analysis and Presentation of Social Scientific Data. URL: <https://cran.r-project.org/package=jtools>
+
+WICKHAM, Hadley. ggplot2: Elegant Graphics for Data Analysis. New York, USA: Springer-Verlag, 2016. URL: <https://ggplot2.tidyverse.org>
+
+R Core Team. R: A language and environment for statistical computing. Vienna, Austria: R Foundation for Statistical Computing 2020. URL: <https://www.R-project.org>
+
+\newpage
+
+# List of appendices
+
+We attach to this thesis several appendices containing additional information, mainly regarding the data used in our thesis. The list of appendices is as follows:
+
+-   Appendix A (Data codebook)
+-   Appendix B (Survey experiment responses)
+-   Appendix C (Final dataset)
+-   Appendix D (Supplementary information)
+-   Appendix E (R code)
+-   Appendix F (Survey experiment I questions)
+-   Appendix G (Survey experiment II questions)
+
+Appendix A serves as a brief introduction to our appendices, whose purposes and contents are summarised therein. It also contains an overview of variables found in Appendix C, our dataset, with explanations as to their values, collection, and purpose.
+
+Appendix B contains complete and incomplete responses for both survey experiments in 4 separate sheets.
+
+Appendix C contains the dataset used for data analysis.
+
+Appendix D contains additional figures and tables not included in the thesis due to insufficient relevance or other reasons.
+
+Appendix E contains the full text of this thesis, including all R code used for data analysis. The file can be opened using the RStudio application.
+
+Appendices F and G detail the structure of both survey experiments conducted for the purposes of this thesis.
+
+Due to issues with the SIS, which does not allow for the upload of a relatively wide range of filename extension types, we were unable to attach our appendices directly to our thesis in a reasonable manner, forcing us to resort to storing the appendices externally. Thus, with the exception of Appendix E, all appendices have been uploaded online and can be retrieved from <https://independent.academia.edu/VojtěchGreger>. Appendix E could not be uploaded to this website, as the file type is not supported, and it is therefore available on demand by e-mail request to the author at [96000997\@fsv.cuni.cz](mailto:96000997@fsv.cuni.cz){.email}. Any further inquiries related to the appendices should also be directed to this address.
